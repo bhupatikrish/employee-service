@@ -1,24 +1,37 @@
 package org.krishna.demo.service.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang.StringUtils;
 import org.krishna.demo.model.Employee;
 import org.krishna.demo.service.EmployeeService;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 	
-	private static List<Employee> employees = new LinkedList<Employee>(Arrays.asList(
-			new Employee(1L, "FristName1", "LastName1", 27500, 122000.00, "Solution Architect"),
-			new Employee(2L, "FristName2", "LastName2", 24512, 95000.00, "Senior Software Engineer")
-				));
-	private static Long count = 2L;
+	private String inputFile = "employees.json";
+	
+	private static List<Employee> employees; 
+	private static Long count = 7L;
+	
+	@PostConstruct
+	public void init() throws IOException {
+		ObjectMapper jsonMapper = new ObjectMapper();
+		InputStream ioStream = EmployeeServiceImpl.class.getResourceAsStream("/" + inputFile);
+		this.employees = jsonMapper.readValue(ioStream, new TypeReference<List<Employee>>() {});
+	}
 
 	@Override
 	public List<Employee> getAllEmployees() {

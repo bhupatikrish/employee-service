@@ -1,95 +1,57 @@
 package org.krishna.demo.service.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang.StringUtils;
+import org.krishna.demo.dao.EmployeeDao;
+import org.krishna.demo.exceptions.EmployeeNotFoundException;
+import org.krishna.demo.exceptions.EmployeeServiceException;
 import org.krishna.demo.model.Employee;
 import org.krishna.demo.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 	
-	private String inputFile = "employees.json";
-	
-	private static List<Employee> employees; 
-	private static Long count = 7L;
-	
-	@PostConstruct
-	public void init() throws IOException {
-		ObjectMapper jsonMapper = new ObjectMapper();
-		InputStream ioStream = EmployeeServiceImpl.class.getResourceAsStream("/" + inputFile);
-		this.employees = jsonMapper.readValue(ioStream, new TypeReference<List<Employee>>() {});
-	}
+	@Autowired
+	private EmployeeDao employeeDao;
 
 	@Override
 	public List<Employee> getAllEmployees() {
-		return employees;
+		return this.employeeDao.getAllEmployees();
 	}
 
 	@Override
 	public Employee getEmployee(Long id) {
-		return employees.stream()
-				.filter(emp -> id == emp.getId())
-				.findAny()
-				.orElse(null);
+		Employee emp = this.employeeDao.getEmployee(id);
+		if(null == emp)
+			throw new EmployeeNotFoundException();
+		return emp;
 	}
 
 	@Override
 	public List<Employee> findEmployees(String search) {
-		return employees.stream()
-				.filter(emp -> this.searchFilter(search, emp))
-				.collect(Collectors.toList());
-	}
-	
-	private boolean searchFilter(String search, Employee employee) {
-		return StringUtils.containsIgnoreCase(employee.getFirstName(), search) ||
-				StringUtils.containsIgnoreCase(employee.getLastName(), search);
+		List<Employee> employees = this.employeeDao.findEmployees(search);
+		if(null == employees || employees.isEmpty())
+			throw new EmployeeNotFoundException();
+		return employees;
 	}
 
 	@Override
 	public Employee addEmployee(Employee employee) {
-		employee.setId(++count);
-		employees.add(employee);
-		return employee;
+		if(null == employee)
+			throw new EmployeeServiceException();
+		return this.employeeDao.addEmployee(employee);
 	}
 
 	@Override
 	public Employee updateEmployee(Long id, Employee employee) {
-		int index = IntStream.range(0, employees.size())
-                .filter(i -> id == employees.get(i).getId())
-                .findFirst().orElse(-1);
-		
-		if(index == -1) {
-			return null;
-		}
-		else {
-			employee.setId(id);
-			employees.set(index, employee);
-			return employee;
-		}
+		return this.employeeDao.updateEmployee(id, employee);
 	}
 
 	@Override
 	public void deleteEmployee(Long id) {
-		int index = IntStream.range(0, employees.size())
-                .filter(i -> id == employees.get(i).getId())
-                .findFirst().orElse(-1);
-		
-		if(index > -1) {
-			employees.remove(index);
-		}
+		this.employeeDao.deleteEmployee(id);
 	}
 
 }

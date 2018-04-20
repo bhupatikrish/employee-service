@@ -1,16 +1,35 @@
 package org.krishna.demo.model;
 
-public class Employee {
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class Employee {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(Employee.class);
+			
 	private Long id;
+	@NotEmpty
 	private String firstName;
+	@NotEmpty
 	private String lastName;
+	@NotEmpty
 	private String address1;
 	private String address2;
+	@NotEmpty
 	private String city;
+	@NotEmpty
 	private String state;
+	@NotNull
 	private Integer zipcode;
+	@NotNull
 	private Double salary;
+	@NotEmpty
 	private String title;
 	private String avatar;
 	private String image;
@@ -19,16 +38,6 @@ public class Employee {
 		super();
 	}
 	
-	public Employee(long id, String firstName, String lastName, int zipcode, double salary, String title) {
-		super();
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.zipcode = zipcode;
-		this.salary = salary;
-		this.title = title;
-	}
-
 	public Long getId() {
 		return id;
 	}
@@ -125,5 +134,14 @@ public class Employee {
 		this.image = image;
 	}
 	
+	public String toString() {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			LOGGER.error("Error converting employee to string: ", e);
+		}
+		return "";
+	}
 	
 }

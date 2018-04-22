@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.krishna.demo.dao.EmployeeDao;
+import org.krishna.demo.exceptions.EmployeeServiceException;
 import org.krishna.demo.model.Employee;
 import org.springframework.stereotype.Service;
 
@@ -54,11 +55,17 @@ public class EmployeeDaoImpl implements EmployeeDao {
 	private boolean searchFilter(String search, Employee employee) {
 		return StringUtils.containsIgnoreCase(employee.getFirstName(), search) ||
 				StringUtils.containsIgnoreCase(employee.getLastName(), search) ||
+				StringUtils.containsIgnoreCase(employee.getTitle(), search) ||
+				StringUtils.containsIgnoreCase(employee.getAddress1(), search) ||
+				StringUtils.containsIgnoreCase(employee.getCity(), search) ||
+				StringUtils.containsIgnoreCase(employee.getState(), search) ||
 				(NumberUtils.isNumber(search) && employee.getSalary().compareTo(Double.parseDouble(search)) > 0);
 	}
 
 	@Override
 	public Employee addEmployee(Employee employee) {
+		if(null == employee)
+			throw new EmployeeServiceException("Employee cannot be null");
 		employee.setId(++count);
 		employees.add(employee);
 		return employee;
@@ -66,6 +73,11 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 	@Override
 	public Employee updateEmployee(Long id, Employee employee) {
+		if(null == id)
+			throw new EmployeeServiceException("Id cannot be empty or null");
+		if(null == employee)
+			throw new EmployeeServiceException("Id cannot be null");
+		
 		int index = IntStream.range(0, employees.size())
                 .filter(i -> id == employees.get(i).getId())
                 .findFirst().orElse(-1);
@@ -82,6 +94,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
 	@Override
 	public void deleteEmployee(Long id) {
+		if(null == id)
+			throw new EmployeeServiceException("Id cannot be null");
+		
 		int index = IntStream.range(0, employees.size())
                 .filter(i -> id == employees.get(i).getId())
                 .findFirst().orElse(-1);

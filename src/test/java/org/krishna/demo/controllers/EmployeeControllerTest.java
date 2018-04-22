@@ -85,7 +85,7 @@ public class EmployeeControllerTest {
 		assertEquals(responseMock.getMetadata().getStatus(), this.employeeController.getEmployee("1").getMetadata().getStatus());
 		
 		this.mockMvc.perform(get(EmployeeControllerTest.uri+ "/1"))
-		//.andDo(print())
+		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(EmployeeControllerTest.mediaType))
 		.andExpect(jsonPath("$.metadata.message").value("Success"))
@@ -96,7 +96,7 @@ public class EmployeeControllerTest {
 	public void test_getEmployee_invalidId() throws Exception {
 		
 		this.mockMvc.perform(get(EmployeeControllerTest.uri+ "/abc"))
-		//.andDo(print())
+		.andDo(print())
 		.andExpect(status().is4xxClientError())
 		.andExpect(jsonPath("$.metadata.message").value("Id Not valid"));
 	}
@@ -118,7 +118,7 @@ public class EmployeeControllerTest {
 		assertEquals("John", response.get(0).getFirstName());
 		
 		this.mockMvc.perform(get(EmployeeControllerTest.uri+ "/search?q=Robert"))
-		//.andDo(print())
+		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(EmployeeControllerTest.mediaType))
 		.andExpect(jsonPath("$.metadata.message").value("Success"))
@@ -129,7 +129,7 @@ public class EmployeeControllerTest {
 	public void test_findEmployee_noSearh() throws Exception {
 		
 		this.mockMvc.perform(get(EmployeeControllerTest.uri+ "/search"))
-		//.andDo(print())
+		.andDo(print())
 		.andExpect(status().is4xxClientError());
 	}
 	
@@ -160,7 +160,7 @@ public class EmployeeControllerTest {
 				.content(jsonMapper.writeValueAsString(emp))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
-		//.andDo(print())
+		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(EmployeeControllerTest.mediaType))
 		.andExpect(jsonPath("$.metadata.message").value("Success"))
@@ -178,7 +178,7 @@ public class EmployeeControllerTest {
 				.content(jsonMapper.writeValueAsString(emp))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
-		//.andDo(print())
+		.andDo(print())
 		.andExpect(status().is4xxClientError());
 	}
 	
@@ -210,7 +210,7 @@ public class EmployeeControllerTest {
 				.content(jsonMapper.writeValueAsString(emp))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
-		//.andDo(print())
+		.andDo(print())
 		.andExpect(status().isOk())
 		.andExpect(content().contentType(EmployeeControllerTest.mediaType))
 		.andExpect(jsonPath("$.metadata.message").value("Success"))

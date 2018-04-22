@@ -1,6 +1,7 @@
 package org.krishna.demo.dao.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,9 +10,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.krishna.demo.exceptions.EmployeeServiceException;
 import org.krishna.demo.model.Employee;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,12 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @SpringBootTest
 public class EmployeeDaoTest {
 	
-	private String inputFile = "employees.json";
+	private static final String inputFile = "employees.json";
 	private List<Employee> employeesMock;
-	
-	@Mock
-	private ObjectMapper jsonMapper;
-	
+
 	@InjectMocks
 	private EmployeeDaoImpl employeeDao;
 	
@@ -57,4 +55,71 @@ public class EmployeeDaoTest {
 	public void test_findEmployeess() {
 		assertEquals(1, this.employeeDao.findEmployees("Robert").size());
 	}
+	
+	@Test
+	public void test_findEmployees_zeroResult() {
+		assertEquals(0, this.employeeDao.findEmployees("NoResults").size());
+	}
+	
+	@Test
+	public void test_findEmployees_null() {
+		assertEquals(0, this.employeeDao.findEmployees(null).size());
+	}
+	
+	@Test
+	public void test_addEmployees() {
+		Employee emp = new Employee();
+		emp.setFirstName("firstName");
+		emp.setLastName("lastName");
+		emp.setAddress1("address1");
+		emp.setAddress2("address2");
+		emp.setCity("city");
+		emp.setState("state");
+		emp.setTitle("title");
+		emp.setSalary(120000.00);
+		
+		int size = this.employeesMock.size();
+		Employee result = this.employeeDao.addEmployee(emp);
+		assertNotNull(result.getId());
+		assertEquals(size+1, this.employeeDao.getAllEmployees().size());
+	}
+	
+	@Test(expected=EmployeeServiceException.class)
+	public void test_addEmployees_null() throws Exception {
+		this.employeeDao.addEmployee(null);
+	}
+	
+	@Test
+	public void test_updateEmployee() {
+		Employee emp = this.employeesMock.get(0);
+		emp.setFirstName("updated_firstname");
+		Employee result = this.employeeDao.updateEmployee(emp.getId(), emp);
+		
+		assertEquals("updated_firstname", result.getFirstName());
+	}
+	
+	@Test(expected=EmployeeServiceException.class)
+	public void test_updateEmployee_id_null() throws Exception {
+		this.employeeDao.updateEmployee(null, new Employee());
+	}
+	
+	@Test(expected=EmployeeServiceException.class)
+	public void test_updateEmployee_employee_null() throws Exception {
+		this.employeeDao.updateEmployee(1L, null);
+	}
+	
+	@Test
+	public void test_DeleteEmployee() {
+		Employee emp = this.employeesMock.get(0);
+		int size = this.employeesMock.size();
+		this.employeeDao.deleteEmployee(emp.getId());
+		
+		assertEquals(size-1, this.employeeDao.getAllEmployees().size());
+	}
+	
+	@Test(expected=EmployeeServiceException.class)
+	public void test_deleteEmployee_id_null() throws Exception {
+		this.employeeDao.deleteEmployee(null);
+	}
+	
 }

@@ -1,4 +1,4 @@
-# Employee UI
+# Employee Service
 This project is part of a demo to demonistrate Angular UI app and Sprinboot services.
 
 Angular UI app: https://github.com/bhupatikrish/employee-ui
@@ -25,7 +25,7 @@ Service Url: http://employee-service.us-east-1.elasticbeanstalk.com/api/employee
 
 ## Component sequesnce diagram
 
-<img src="https://s3.amazonaws.com/github-arch-img/component-sequence.jpg" height="400px" width="500px"/>
+<img src="https://s3.amazonaws.com/github-arch-img/component-sequence1.jpg" height="500px" width="600px"/>
 
 When the UI application is accessed, the app is donwloaded to the browser. 
 Angular application is bootstrapped and based on the route configurations the initial component/ page is loaded.
@@ -45,7 +45,7 @@ When the app is bootstrapped and loaded, based on the route configuration, the d
 
 Below is high level component diagram.
 
-<img src="https://s3.amazonaws.com/github-arch-img/ui-components.jpg" height="400px" width="500px"/>
+<img src="https://s3.amazonaws.com/github-arch-img/ui-components1.jpg" height="500px" width="600px"/>
 
 <ul>
   <li>AppModule: This is the main app module. It imports modules, components and services used in this application.</li>
@@ -65,7 +65,7 @@ Below is high level component diagram.
 
 This service is developed using Spring Framework. https://projects.spring.io/spring-framework/
 
-<img src="https://s3.amazonaws.com/github-arch-img/service-sequence.jpg" height="400px" width="500px"/>
+<img src="https://s3.amazonaws.com/github-arch-img/service-sequence1.jpg" height="600px" width="700px"/>
 
 ## Local development environment
 
